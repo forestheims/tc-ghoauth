@@ -22,4 +22,11 @@ describe('tc-ghoauth routes', () => {
     const cookieJar = jar;
     expect(cookieJar).toBeTruthy();
   });
+
+  it('redirects to githubs OAuth', async () => {
+    const res = await request(app).get('/api/v1/github/login');
+    expect(res.header.location).toMatch(
+      /https:\/\/github.com\/login\/oauth\/authorize\?client_id=[\w\d]+&scope=user&redirect_uri=[\w\d]/i
+    );
+  });
 });
