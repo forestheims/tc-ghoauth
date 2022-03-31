@@ -17,8 +17,9 @@ describe('tc-ghoauth routes', () => {
     return agent;
   };
 
-  it('is a blank test', async () => {
-    const agent = await newAgent();
-    expect(agent).toBeTruthy();
+  it('creates a cookie jar', async () => {
+    const { jar } = await newAgent();
+    const cookieJar = jar;
+    expect(cookieJar).toBeTruthy();
   });
 });
