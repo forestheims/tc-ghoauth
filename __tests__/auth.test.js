@@ -24,9 +24,23 @@ describe('tc-ghoauth routes', () => {
   });
 
   it('redirects to githubs OAuth', async () => {
-    const res = await request(app).get('/api/v1/github/login');
+    const res = await newAgent().get('/api/v1/github/login');
     expect(res.header.location).toMatch(
       /https:\/\/github.com\/login\/oauth\/authorize\?client_id=[\w\d]+&scope=user&redirect_uri=[\w\d]/i
     );
+  });
+
+  it('should login and redirect users to /api/v1/github/dashboard', async () => {
+    const res = await newAgent()
+      .get('/api/v1/github/login/callback?code=42')
+      .redirects(1);
+    expect(res.body).toEqual({
+      id: expect.any(String),
+      username: 'fake_github_user',
+      email: 'not-real@example.com',
+      avatar: expect.any(String),
+      iat: expect.any(Number),
+      exp: expect.any(Number),
+    });
   });
 });
