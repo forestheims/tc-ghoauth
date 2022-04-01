@@ -3,6 +3,8 @@ const setup = require('../data/setup');
 const request = require('supertest');
 const app = require('../lib/app');
 
+jest.mock('../lib/utils/github');
+
 describe('tc-ghoauth routes', () => {
   beforeEach(() => {
     return setup(pool);
@@ -24,16 +26,19 @@ describe('tc-ghoauth routes', () => {
   });
 
   it('redirects to githubs OAuth', async () => {
-    const res = await newAgent().get('/api/v1/github/login');
+    const res = await request.agent(app).get('/api/v1/github/login');
     expect(res.header.location).toMatch(
       /https:\/\/github.com\/login\/oauth\/authorize\?client_id=[\w\d]+&scope=user&redirect_uri=[\w\d]/i
     );
   });
 
   it('should login and redirect users to /api/v1/github/dashboard', async () => {
-    const res = await newAgent()
+    const res = await request
+      .agent(app)
       .get('/api/v1/github/login/callback?code=42')
       .redirects(1);
+    console.log('res', res.body);
+
     expect(res.body).toEqual({
       id: expect.any(String),
       username: 'fake_github_user',
@@ -41,6 +46,14 @@ describe('tc-ghoauth routes', () => {
       avatar: expect.any(String),
       iat: expect.any(Number),
       exp: expect.any(Number),
+    });
+  });
+
+  it('should logout a user', async () => {
+    const res = await request.agent(app).delete('/api/v1/github/sessions');
+    expect(res.body).toEqual({
+      success: true,
+      message: 'Sign Out Successful!',
     });
   });
 });
