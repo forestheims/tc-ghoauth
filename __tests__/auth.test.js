@@ -37,10 +37,9 @@ describe('tc-ghoauth routes', () => {
       .agent(app)
       .get('/api/v1/github/login/callback?code=42')
       .redirects(1);
-    console.log('res', res.body);
+    console.log('res', res);
 
     expect(res.body).toEqual({
-      id: expect.any(String),
       username: 'fake_github_user',
       email: 'not-real@example.com',
       avatar: expect.any(String),
