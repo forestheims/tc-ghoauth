@@ -17,11 +17,7 @@ describe('tc-ghoauth routes for posts', () => {
 
   it('creates a post', async () => {
     const agent = request.agent(app);
-    // await User.insert({
-    //   username: 'acat',
-    //   avatar: 'meow',
-    //   email: 'nah',
-    // });
+    await agent.get('/api/v1/github/login/callback?code=42').redirects(1);
 
     const res = await agent.post('/api/v1/posts').send({
       text: 'meow meow meow',
@@ -36,13 +32,9 @@ describe('tc-ghoauth routes for posts', () => {
 
   it('gets all posts', async () => {
     const agent = request.agent(app);
-    // await User.insert({
-    //   username: 'acat',
-    //   avatar: 'meow',
-    //   email: 'nah',
-    // });
+    await agent.get('/api/v1/github/login/callback?code=42').redirects(1);
 
-    await request.agent(app).post('/api/v1/posts').send({
+    await agent.post('/api/v1/posts').send({
       text: 'meow meow meow',
     });
 
