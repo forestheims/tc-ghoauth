@@ -5,7 +5,7 @@ const app = require('../lib/app');
 
 jest.mock('../lib/utils/github');
 
-describe('tc-ghoauth routes', () => {
+describe('tc-ghoauth routes for auth', () => {
   beforeEach(() => {
     return setup(pool);
   });
@@ -37,7 +37,6 @@ describe('tc-ghoauth routes', () => {
       .agent(app)
       .get('/api/v1/github/login/callback?code=42')
       .redirects(1);
-    console.log('res', res);
 
     expect(res.body).toEqual({
       username: 'fake_github_user',
