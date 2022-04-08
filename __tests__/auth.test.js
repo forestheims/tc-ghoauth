@@ -41,7 +41,9 @@ describe('tc-ghoauth routes for auth', () => {
   });
 
   it('should logout a user', async () => {
-    const res = await request.agent(app).delete('/api/v1/github/sessions');
+    const agent = request.agent(app);
+    await agent.get('/api/v1/github/login/callback?code=42').redirects(1);
+    const res = await agent.delete('/api/v1/github/sessions');
     expect(res.body).toEqual({
       success: true,
       message: 'Sign Out Successful!',
