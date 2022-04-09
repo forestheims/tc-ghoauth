@@ -32,23 +32,18 @@ describe('tc-ghoauth routes for auth', () => {
     );
   });
 
-  it('should login and redirect users to /api/v1/github/dashboard', async () => {
+  it('should login and redirect users to /api/v1/posts', async () => {
     const res = await request
       .agent(app)
       .get('/api/v1/github/login/callback?code=42')
       .redirects(1);
-
-    expect(res.body).toEqual({
-      username: 'fake_github_user',
-      email: 'not-real@example.com',
-      avatar: expect.any(String),
-      iat: expect.any(Number),
-      exp: expect.any(Number),
-    });
+    expect(res.req.path).toEqual('/api/v1/posts');
   });
 
   it('should logout a user', async () => {
-    const res = await request.agent(app).delete('/api/v1/github/sessions');
+    const agent = request.agent(app);
+    await agent.get('/api/v1/github/login/callback?code=42').redirects(1);
+    const res = await agent.delete('/api/v1/github/sessions');
     expect(res.body).toEqual({
       success: true,
       message: 'Sign Out Successful!',
